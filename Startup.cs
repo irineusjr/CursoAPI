@@ -35,15 +35,27 @@ namespace ApiCatalogo
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                //the default HSTS value is 30 days.
+                //you may want to change this for production scenarios, see
+                //https://aka.ms/aspnetcore-hsts.com
+                app.UseHsts();
+            }
 
+            //adiciona o middleware para redirecionar para https
             app.UseHttpsRedirection();
 
+            //adiciona o middleware de roteamento
             app.UseRouting();
 
+            //adiciona o middleware que habilita autorização
             app.UseAuthorization();
-
+            
+            //adiciona o middleware que executa o endpoint do request atual
             app.UseEndpoints(endpoints =>
             {
+                //adiciona os endpoints para as actions dos controladores sem especificar rotas
                 endpoints.MapControllers();
             });
         }
