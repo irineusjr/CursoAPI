@@ -9,10 +9,12 @@ namespace ApiCatalogo.Entities
     {
         [Key]
         public int ProdutoId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O nome é obrigatório")]
+        [StringLength(80, ErrorMessage = "O nome deve ter entre {2} e {1} caracteres", MinimumLength = 5)]
         [MaxLength(80)]
         public string Nome { get; set; }
-        [Required]
+        [Required(ErrorMessage = "A descrição é obrigatória")]
+        [StringLength(300, ErrorMessage = "A descrição deve ter entre {2} e {1} caracteres", MinimumLength = 5)]
         [MaxLength(300)]
         public string Descricao { get; set; }
         [Required]
