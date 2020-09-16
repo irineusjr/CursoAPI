@@ -39,7 +39,7 @@ namespace ApiCatalogo
             {
                 //the default HSTS value is 30 days.
                 //you may want to change this for production scenarios, see
-                //https://aka.ms/aspnetcore-hsts.com
+                //https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -48,6 +48,8 @@ namespace ApiCatalogo
 
             //adiciona o middleware de roteamento
             app.UseRouting();
+
+            app.UseAuthentication();
 
             //adiciona o middleware que habilita autorização
             app.UseAuthorization();
