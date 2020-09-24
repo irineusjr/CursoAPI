@@ -1,10 +1,8 @@
 ﻿using ApiCatalogo.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace ApiCatalogo.Repository
 {
@@ -21,24 +19,25 @@ namespace ApiCatalogo.Repository
             return _contexto.Set<T>().AsNoTracking();
         }
 
+        public T GetById(Expression<Func<T, bool>> predicate)
+        {
+            return _contexto.Set<T>().SingleOrDefault(predicate);
+        }
+
         public void Add(T entity)
         {
-            throw new NotImplementedException();
+            _contexto.Set<T>().Add(entity);
         }
 
         public void Delete(T entity)
         {
-            throw new NotImplementedException();
-        }
-
-        public T GetById(Expression<Func<T, bool>> predicate)
-        {
-            throw new NotImplementedException();
+            _contexto.Set<T>().Remove(entity);
         }
 
         public void Update(T entity)
         {
-            throw new NotImplementedException();
+            _contexto.Entry(entity).State = EntityState.Modified;
+            _contexto.Set<T>().Update(entity);
         }
     }
 }
