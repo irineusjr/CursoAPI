@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
     public class ProdutosController : ControllerBase
@@ -27,7 +28,12 @@ namespace ApiCatalogo.Controllers
         {
             return _context.Produtos.AsNoTracking().ToList();
         }
-
+        
+        /// <summary>
+        /// Obtem um produto pelo id
+        /// </summary>
+        /// <param name="id">Id do produto</param>
+        /// <returns>Objeto produto</returns>
         [HttpGet("{id}", Name = "ObterProduto")]
         public ActionResult<Produto> GetById(int id)
         {
@@ -39,6 +45,25 @@ namespace ApiCatalogo.Controllers
             return produto;
         }
 
+        /// <summary>
+        /// Cadastra um novo produto
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///         POST api/produtos
+        ///         {
+        ///                "nome": "",
+        ///                "descricao": "",
+        ///                "preco": 0,
+        ///                "imagemUrl": "http://www.images.com/prod31.jpg",
+        ///                "estoque": 100,
+        ///                "dataCadastro": "2020-09-12T19:22:00",
+        ///                "categoriaId": 9
+        ///         }
+        /// </remarks>
+        /// <param name="produto">Objeto produto</param>
+        /// <returns>Objeto produto cadastrado</returns>
         [HttpPost]
         public ActionResult Post([FromBody]Produto produto)
         {
@@ -49,6 +74,26 @@ namespace ApiCatalogo.Controllers
                 new { id = produto.ProdutoId }, produto);
 
         }
+        /// <summary>
+        /// Modifica um produto pelo id
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///         PUT api/produtos
+        ///         {
+        ///                "nome": "",
+        ///                "descricao": "",
+        ///                "preco": 0,
+        ///                "imagemUrl": "http://www.images.com/prod31.jpg",
+        ///                "estoque": 100,
+        ///                "dataCadastro": "2020-09-12T19:22:00",
+        ///                "categoriaId": 9
+        ///         }
+        /// </remarks>
+        /// <param name="id">id do produto a ser modificado</param>
+        /// <param name="produto">objeto produto</param>
+        /// <returns>Status do objeto modificado</returns>
         [HttpPut("{id}")]
         public ActionResult Put(int id, [FromBody]Produto produto)
         {
@@ -61,6 +106,11 @@ namespace ApiCatalogo.Controllers
             return Ok();
 
         }
+        /// <summary>
+        /// Exclui um produto pelo id
+        /// </summary>
+        /// <param name="id">Id do produto</param>
+        /// <returns>Objeto produto excluído</returns>
         [HttpDelete("{id}")]
         public ActionResult<Produto> Delete(int id)
         {

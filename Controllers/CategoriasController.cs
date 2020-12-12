@@ -1,5 +1,6 @@
 ﻿using ApiCatalogo.Context;
 using ApiCatalogo.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
@@ -28,7 +30,10 @@ namespace ApiCatalogo.Controllers
             return await _context.Categorias.AsNoTracking().ToListAsync();
         }
 
-
+        /// <summary>
+        /// Recupera todas as categorias e seus respectivos produtos
+        /// </summary>
+        /// <returns>Objetos Categorias e Produtos</returns>
         [HttpGet("produtos")]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
         {
@@ -41,6 +46,8 @@ namespace ApiCatalogo.Controllers
         /// <param name="id">Id da Categoria</param>
         /// <returns>Dados da categoria especificada</returns>
         [HttpGet("{id}", Name = "ObterCategoria")]
+        [ProducesResponseType(typeof(Categoria),StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Categoria>> GetByIdAsync(int id)
         {
             var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
@@ -68,6 +75,8 @@ namespace ApiCatalogo.Controllers
         /// <returns>O objeto Categoria incluída</returns>
         /// <remarks>Retorna a Categoria inserida</remarks>
         [HttpPost]
+        [ProducesResponseType(typeof(Categoria), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> PostAsync([FromBody]Categoria categoria)
         {
             _context.Categorias.Add(categoria);
@@ -77,6 +86,22 @@ namespace ApiCatalogo.Controllers
                 new { id = categoria.CategoriaId }, categoria);
 
         }
+        /// <summary>
+        /// Atualiza uma categoria, informando o id correspondente
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///         PUT api/categorias
+        ///         {
+        ///            "categoriaId": 7,
+        ///            "nome": "Cama, mesa e banho",
+        ///            "imagemUrl": "http://www.images.com/img4.jpg",
+        ///         }
+        /// </remarks>
+        /// <param name="id">Id da Categoria</param>
+        /// <param name="categoria">objeto categoria</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<ActionResult> PutAsync(int id, [FromBody]Categoria categoria)
         {
@@ -89,6 +114,11 @@ namespace ApiCatalogo.Controllers
             return Ok();
 
         }
+        /// <summary>
+        /// Remove uma categoria da base de dados
+        /// </summary>
+        /// <param name="id">id da categoria</param>
+        /// <returns>Retorna o objeto categoria excluído</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Categoria>> DeleteAsync(int id)
         {

@@ -10,6 +10,12 @@
             </summary>
             <returns>Objetos Categorias</returns>
         </member>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.GetCategoriasProdutosAsync">
+            <summary>
+            Recupera todas as categorias e seus respectivos produtos
+            </summary>
+            <returns>Objetos Categorias e Produtos</returns>
+        </member>
         <member name="M:ApiCatalogo.Controllers.CategoriasController.GetByIdAsync(System.Int32)">
             <summary>
             Obter Categoria pelo id
@@ -35,11 +41,93 @@
              <returns>O objeto Categoria incluída</returns>
              <remarks>Retorna a Categoria inserida</remarks>
         </member>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.PutAsync(System.Int32,ApiCatalogo.Entities.Categoria)">
+             <summary>
+             Atualiza uma categoria, informando o id correspondente
+             </summary>
+             <remarks>
+             Exemplo de request:
+            
+                     PUT api/categorias
+                     {
+                        "categoriaId": 7,
+                        "nome": "Cama, mesa e banho",
+                        "imagemUrl": "http://www.images.com/img4.jpg",
+                     }
+             </remarks>
+             <param name="id">Id da Categoria</param>
+             <param name="categoria">objeto categoria</param>
+             <returns></returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.DeleteAsync(System.Int32)">
+            <summary>
+            Remove uma categoria da base de dados
+            </summary>
+            <param name="id">id da categoria</param>
+            <returns>Retorna o objeto categoria excluído</returns>
+        </member>
         <member name="M:ApiCatalogo.Controllers.ProdutosController.Get">
             <summary>
             Obtem todos os produtos
             </summary>
             <returns>Retorna todos os produtos</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.GetById(System.Int32)">
+            <summary>
+            Obtem um produto pelo id
+            </summary>
+            <param name="id">Id do produto</param>
+            <returns>Objeto produto</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Post(ApiCatalogo.Entities.Produto)">
+             <summary>
+             Cadastra um novo produto
+             </summary>
+             <remarks>
+             Exemplo de request:
+            
+                     POST api/produtos
+                     {
+                            "nome": "",
+                            "descricao": "",
+                            "preco": 0,
+                            "imagemUrl": "http://www.images.com/prod31.jpg",
+                            "estoque": 100,
+                            "dataCadastro": "2020-09-12T19:22:00",
+                            "categoriaId": 9
+                     }
+             </remarks>
+             <param name="produto">Objeto produto</param>
+             <returns>Objeto produto cadastrado</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Put(System.Int32,ApiCatalogo.Entities.Produto)">
+             <summary>
+             Modifica um produto pelo id
+             </summary>
+             <remarks>
+             Exemplo de request:
+            
+                     PUT api/produtos
+                     {
+                            "nome": "",
+                            "descricao": "",
+                            "preco": 0,
+                            "imagemUrl": "http://www.images.com/prod31.jpg",
+                            "estoque": 100,
+                            "dataCadastro": "2020-09-12T19:22:00",
+                            "categoriaId": 9
+                     }
+             </remarks>
+             <param name="id">id do produto a ser modificado</param>
+             <param name="produto">objeto produto</param>
+             <returns>Status do objeto modificado</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Delete(System.Int32)">
+            <summary>
+            Exclui um produto pelo id
+            </summary>
+            <param name="id">Id do produto</param>
+            <returns>Objeto produto excluído</returns>
         </member>
     </members>
 </doc>
