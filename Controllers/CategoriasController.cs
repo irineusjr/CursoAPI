@@ -25,6 +25,7 @@ namespace ApiCatalogo.Controllers
         /// </summary>
         /// <returns>Objetos Categorias</returns>
         [HttpGet]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
         {
             return await _context.Categorias.AsNoTracking().ToListAsync();
@@ -35,6 +36,7 @@ namespace ApiCatalogo.Controllers
         /// </summary>
         /// <returns>Objetos Categorias e Produtos</returns>
         [HttpGet("produtos")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
         {
             return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
@@ -46,8 +48,9 @@ namespace ApiCatalogo.Controllers
         /// <param name="id">Id da Categoria</param>
         /// <returns>Dados da categoria especificada</returns>
         [HttpGet("{id}", Name = "ObterCategoria")]
-        [ProducesResponseType(typeof(Categoria),StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(typeof(Categoria),StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<ActionResult<Categoria>> GetByIdAsync(int id)
         {
             var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
@@ -75,8 +78,9 @@ namespace ApiCatalogo.Controllers
         /// <returns>O objeto Categoria incluída</returns>
         /// <remarks>Retorna a Categoria inserida</remarks>
         [HttpPost]
-        [ProducesResponseType(typeof(Categoria), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(Categoria), StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<ActionResult> PostAsync([FromBody]Categoria categoria)
         {
             _context.Categorias.Add(categoria);
@@ -103,6 +107,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="categoria">objeto categoria</param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<ActionResult> PutAsync(int id, [FromBody]Categoria categoria)
         {
             if (id != categoria.CategoriaId)
@@ -120,6 +125,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="id">id da categoria</param>
         /// <returns>Retorna o objeto categoria excluído</returns>
         [HttpDelete("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public async Task<ActionResult<Categoria>> DeleteAsync(int id)
         {
             //var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
