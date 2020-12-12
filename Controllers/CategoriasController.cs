@@ -18,6 +18,10 @@ namespace ApiCatalogo.Controllers
             _context = contexto;
         }
 
+        /// <summary>
+        /// Obter todas as Categorias
+        /// </summary>
+        /// <returns>Objetos Categorias</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
         {
@@ -31,6 +35,11 @@ namespace ApiCatalogo.Controllers
             return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
         }
 
+        /// <summary>
+        /// Obter Categoria pelo id
+        /// </summary>
+        /// <param name="id">Id da Categoria</param>
+        /// <returns>Dados da categoria especificada</returns>
         [HttpGet("{id}", Name = "ObterCategoria")]
         public async Task<ActionResult<Categoria>> GetByIdAsync(int id)
         {
@@ -42,6 +51,22 @@ namespace ApiCatalogo.Controllers
             return categoria;
         }
 
+        /// <summary>
+        /// Inclui uma nova categoria
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///
+        ///         POST api/categorias
+        ///         {
+        ///            "categoriaId": 1,
+        ///            "nome": "categoria1",
+        ///            "imagemUrl": "http://teste.net/1.jpg"
+        ///         }
+        /// </remarks> 
+        /// <param name="categoria">Objeto Categoria</param>
+        /// <returns>O objeto Categoria incluída</returns>
+        /// <remarks>Retorna a Categoria inserida</remarks>
         [HttpPost]
         public async Task<ActionResult> PostAsync([FromBody]Categoria categoria)
         {

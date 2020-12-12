@@ -18,6 +18,10 @@ namespace ApiCatalogo.Controllers
             _context = contexto;
         }
 
+        /// <summary>
+        /// Obtem todos os produtos
+        /// </summary>
+        /// <returns>Retorna todos os produtos</returns>
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {

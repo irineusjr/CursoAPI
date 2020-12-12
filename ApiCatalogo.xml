@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiCatalogo</name>
+    </assembly>
+    <members>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.GetAsync">
+            <summary>
+            Obter todas as Categorias
+            </summary>
+            <returns>Objetos Categorias</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.GetByIdAsync(System.Int32)">
+            <summary>
+            Obter Categoria pelo id
+            </summary>
+            <param name="id">Id da Categoria</param>
+            <returns>Dados da categoria especificada</returns>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.PostAsync(ApiCatalogo.Entities.Categoria)">
+             <summary>
+             Inclui uma nova categoria
+             </summary>
+             <remarks>
+             Exemplo de request:
+            
+                     POST api/categorias
+                     {
+                        "categoriaId": 1,
+                        "nome": "categoria1",
+                        "imagemUrl": "http://teste.net/1.jpg"
+                     }
+             </remarks> 
+             <param name="categoria">Objeto Categoria</param>
+             <returns>O objeto Categoria incluída</returns>
+             <remarks>Retorna a Categoria inserida</remarks>
+        </member>
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Get">
+            <summary>
+            Obtem todos os produtos
+            </summary>
+            <returns>Retorna todos os produtos</returns>
+        </member>
+    </members>
+</doc>

@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace ApiCatalogo
 {
@@ -23,6 +27,34 @@ namespace ApiCatalogo
         {
             services.AddDbContext<CatalogoDBContext>(options =>
             options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+
+            //Registrar o gerador swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "CatalogoAPI",
+                    Description = "Catálogo de Produtos e Categorias",
+                    TermsOfService = new Uri("https://www.irineusjr.com.br/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Irineu",
+                        Email = "irineusjr@yahoo.com.br",
+                        Url = new Uri("https://www.irineusjr.com.br"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Usar sobre LICX",
+                        Url = new Uri("https://www.irineusjr.com.br/license"),
+                    }
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
             services.AddControllers()
                     .AddNewtonsoftJson(options => 
                     options.SerializerSettings.ReferenceLoopHandling = 
@@ -55,6 +87,18 @@ namespace ApiCatalogo
 
             //adiciona o middleware que habilita autorização
             app.UseAuthorization();
+
+            app.UseCors(opt => opt.AllowAnyOrigin());
+
+            //swagger
+            app.UseSwagger();
+
+            //swaggerUI
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                    "Catálogo de Produtos e Categorias");
+            });
             
             //adiciona o middleware que executa o endpoint do request atual
             app.UseEndpoints(endpoints =>
