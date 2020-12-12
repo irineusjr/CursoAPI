@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
 {
+    [ApiConventionType(typeof(DefaultApiConventions))]
     [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
@@ -24,7 +25,7 @@ namespace ApiCatalogo.Controllers
         /// </summary>
         /// <returns>Retorna todos os produtos</returns>
         [HttpGet]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<IEnumerable<Produto>> Get()
         {
             return _context.Produtos.AsNoTracking().ToList();
@@ -36,7 +37,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="id">Id do produto</param>
         /// <returns>Objeto produto</returns>
         [HttpGet("{id}", Name = "ObterProduto")]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<Produto> GetById(int id)
         {
             var produto = _context.Produtos.Find(id);
@@ -67,7 +68,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="produto">Objeto produto</param>
         /// <returns>Objeto produto cadastrado</returns>
         [HttpPost]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
+        //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult Post([FromBody]Produto produto)
         {
             _context.Produtos.Add(produto);
@@ -98,7 +99,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="produto">objeto produto</param>
         /// <returns>Status do objeto modificado</returns>
         [HttpPut("{id}")]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+        //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public ActionResult Put(int id, [FromBody]Produto produto)
         {
             if (id != produto.ProdutoId)
@@ -116,7 +117,7 @@ namespace ApiCatalogo.Controllers
         /// <param name="id">Id do produto</param>
         /// <returns>Objeto produto excluído</returns>
         [HttpDelete("{id}")]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
+        //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public ActionResult<Produto> Delete(int id)
         {
             //var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
