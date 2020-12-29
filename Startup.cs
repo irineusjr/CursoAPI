@@ -1,5 +1,7 @@
 using ApiCatalogo.Context;
+using ApiCatalogo.Mappings;
 using ApiCatalogo.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +29,13 @@ namespace ApiCatalogo
         {
             services.AddDbContext<CatalogoDBContext>(options =>
             options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             //Registrar o gerador swagger
             services.AddSwaggerGen(c =>
@@ -60,6 +69,7 @@ namespace ApiCatalogo
                     options.SerializerSettings.ReferenceLoopHandling = 
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

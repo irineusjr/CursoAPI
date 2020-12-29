@@ -1,5 +1,7 @@
-﻿using ApiCatalogo.Context;
+﻿using ApiCatalogo.DTOs;
 using ApiCatalogo.Entities;
+using ApiCatalogo.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -14,10 +16,19 @@ namespace ApiCatalogo.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly CatalogoDBContext _context;
-        public ProdutosController(CatalogoDBContext contexto)
+        //private readonly CatalogoDBContext _context;
+        //public ProdutosController(CatalogoDBContext contexto)
+        //{
+        //    _context = contexto;
+        //}
+
+        private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
+
+        public ProdutosController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = contexto;
+            _uof = unitOfWork;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -26,9 +37,12 @@ namespace ApiCatalogo.Controllers
         /// <returns>Retorna todos os produtos</returns>
         [HttpGet]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get()
         {
-            return _context.Produtos.AsNoTracking().ToList();
+            var produtos = await _uof.ProdutoRepository.Get().ToListAsync();
+            var produtosDto = _mapper.Map<List<ProdutoDTO>>(produtos);
+            return produtosDto;
+            //return await _uof.ProdutoRepository.Get().ToListAsync();
         }
         
         /// <summary>
@@ -38,14 +52,16 @@ namespace ApiCatalogo.Controllers
         /// <returns>Objeto produto</returns>
         [HttpGet("{id}", Name = "ObterProduto")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public ActionResult<Produto> GetById(int id)
+        public async Task<ActionResult<ProdutoDTO>> GetById(int id)
         {
-            var produto = _context.Produtos.Find(id);
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
             if (produto == null)
             {
                 return NotFound();
             }
-            return produto;
+
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+            return produtoDto;
         }
 
         /// <summary>
@@ -65,17 +81,18 @@ namespace ApiCatalogo.Controllers
         ///                "categoriaId": 9
         ///         }
         /// </remarks>
-        /// <param name="produto">Objeto produto</param>
+        /// <param name="produtoDto">Objeto produto</param>
         /// <returns>Objeto produto cadastrado</returns>
         [HttpPost]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public ActionResult Post([FromBody]Produto produto)
+        public async Task<ActionResult> Post([FromBody]ProdutoDTO produtoDto)
         {
-            _context.Produtos.Add(produto);
-             _context.SaveChanges();
+            var produto = _mapper.Map<Produto>(produtoDto);
+            _uof.ProdutoRepository.Add(produto);
+            await _uof.Commit();
 
             return new CreatedAtRouteResult("ObterProduto",
-                new { id = produto.ProdutoId }, produto);
+                new { id = produto.ProdutoId }, produtoDto);
 
         }
         /// <summary>
@@ -96,20 +113,20 @@ namespace ApiCatalogo.Controllers
         ///         }
         /// </remarks>
         /// <param name="id">id do produto a ser modificado</param>
-        /// <param name="produto">objeto produto</param>
+        /// <param name="produtoDto">objeto produto</param>
         /// <returns>Status do objeto modificado</returns>
         [HttpPut("{id}")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        public ActionResult Put(int id, [FromBody]Produto produto)
+        public async Task<ActionResult> Put(int id, [FromBody]ProdutoDTO produtoDto)
         {
-            if (id != produto.ProdutoId)
+            if (id != produtoDto.ProdutoId)
             {
                 return BadRequest();
             }
-            _context.Entry(produto).State = EntityState.Modified;
-             _context.SaveChangesAsync();
+            var produto = _mapper.Map<Produto>(produtoDto);
+            _uof.ProdutoRepository.Update(produto);
+            await _uof.Commit();
             return Ok();
-
         }
         /// <summary>
         /// Exclui um produto pelo id
@@ -118,17 +135,25 @@ namespace ApiCatalogo.Controllers
         /// <returns>Objeto produto excluído</returns>
         [HttpDelete("{id}")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
-        public ActionResult<Produto> Delete(int id)
+        public async Task<ActionResult<ProdutoDTO>> Delete(int id)
         {
             //var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-            var produto = _context.Produtos.Find(id);
+            //var produto = _context.Produtos.Find(id);
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+
             if (produto == null)
             {
                 return NotFound();
             }
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
-            return produto;
+
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+            //_context.Produtos.Remove(produto);
+            //_context.SaveChanges();
+            //return produto;
+            _uof.ProdutoRepository.Delete(produto);
+            await _uof.Commit();
+            return produtoDto;
         }
     }
 }

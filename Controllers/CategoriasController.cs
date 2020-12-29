@@ -1,10 +1,11 @@
 ﻿using ApiCatalogo.Context;
+using ApiCatalogo.DTOs;
 using ApiCatalogo.Entities;
-using Microsoft.AspNetCore.Http;
+using ApiCatalogo.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
@@ -15,10 +16,14 @@ namespace ApiCatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly CatalogoDBContext _context;
-        public CategoriasController(CatalogoDBContext contexto)
+        //private readonly CatalogoDBContext _context;
+        private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
+        public CategoriasController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = contexto;
+            //_context = contexto;
+            _uof = unitOfWork;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -27,9 +32,11 @@ namespace ApiCatalogo.Controllers
         /// <returns>Objetos Categorias</returns>
         [HttpGet]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetAsync()
         {
-            return await _context.Categorias.AsNoTracking().ToListAsync();
+            var categorias = await _uof.CategoriaRepository.Get().ToListAsync();
+            var categoriasDto = _mapper.Map<List<CategoriaDTO>>(categorias);
+            return categoriasDto;
         }
 
         /// <summary>
@@ -38,9 +45,12 @@ namespace ApiCatalogo.Controllers
         /// <returns>Objetos Categorias e Produtos</returns>
         [HttpGet("produtos")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutosAsync()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetCategoriasProdutosAsync()
         {
-            return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
+            //return await _context.Categorias.Include(x => x.Produtos).ToListAsync();
+            var categorias = await _uof.CategoriaRepository.GetCategoriasProdutos();
+            var categoriasDto = _mapper.Map<List<CategoriaDTO>>(categorias);
+            return categoriasDto;
         }
 
         /// <summary>
@@ -52,14 +62,15 @@ namespace ApiCatalogo.Controllers
         //[ProducesResponseType(typeof(Categoria),StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<Categoria>> GetByIdAsync(int id)
+        public async Task<ActionResult<CategoriaDTO>> GetByIdAsync(int id)
         {
-            var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
+            //var categoria = await _context.Categorias.AsNoTracking().FirstOrDefaultAsync(c => c.CategoriaId == id);
+            var categoria = await _uof.CategoriaRepository.GetById(c => c.CategoriaId == id);
             if (categoria == null)
             {
                 return NotFound();
             }
-            return categoria;
+            return _mapper.Map<CategoriaDTO>(categoria);
         }
 
         /// <summary>
@@ -75,20 +86,21 @@ namespace ApiCatalogo.Controllers
         ///            "imagemUrl": "http://teste.net/1.jpg"
         ///         }
         /// </remarks> 
-        /// <param name="categoria">Objeto Categoria</param>
+        /// <param name="categoriaDto">Objeto Categoria</param>
         /// <returns>O objeto Categoria incluída</returns>
         /// <remarks>Retorna a Categoria inserida</remarks>
         [HttpPost]
         //[ProducesResponseType(typeof(Categoria), StatusCodes.Status201Created)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public async Task<ActionResult> PostAsync([FromBody]Categoria categoria)
+        public async Task<ActionResult> PostAsync([FromBody]CategoriaDTO categoriaDto)
         {
-            _context.Categorias.Add(categoria);
-            await _context.SaveChangesAsync();
+            var categoria = _mapper.Map<Categoria>(categoriaDto);
+            _uof.CategoriaRepository.Add(categoria);
+            await _uof.Commit();
 
             return new CreatedAtRouteResult("ObterCategoria",
-                new { id = categoria.CategoriaId }, categoria);
+                new { id = categoria.CategoriaId }, categoriaDto);
 
         }
         /// <summary>
@@ -105,18 +117,19 @@ namespace ApiCatalogo.Controllers
         ///         }
         /// </remarks>
         /// <param name="id">Id da Categoria</param>
-        /// <param name="categoria">objeto categoria</param>
+        /// <param name="categoriaDto">objeto categoria</param>
         /// <returns></returns>
         [HttpPut("{id}")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        public async Task<ActionResult> PutAsync(int id, [FromBody]Categoria categoria)
+        public async Task<ActionResult> PutAsync(int id, [FromBody]CategoriaDTO categoriaDto)
         {
-            if (id != categoria.CategoriaId)
+            if (id != categoriaDto.CategoriaId)
             {
                 return BadRequest();
             }
-            _context.Entry(categoria).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var categoria = _mapper.Map<Categoria>(categoriaDto);
+            _uof.CategoriaRepository.Update(categoria);
+            await _uof.Commit();
             return Ok();
 
         }
@@ -127,17 +140,18 @@ namespace ApiCatalogo.Controllers
         /// <returns>Retorna o objeto categoria excluído</returns>
         [HttpDelete("{id}")]
         //[ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
-        public async Task<ActionResult<Categoria>> DeleteAsync(int id)
+        public async Task<ActionResult<CategoriaDTO>> DeleteAsync(int id)
         {
             //var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-            var categoria = await _context.Categorias.FindAsync(id);
+            var categoria = await _uof.CategoriaRepository.GetById(c => c.CategoriaId == id);
             if (categoria == null)
             {
                 return NotFound();
             }
-            _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-            return categoria;
+            var categoriaDto = _mapper.Map<CategoriaDTO>(categoria);
+            _uof.CategoriaRepository.Delete(categoria);
+            await _uof.Commit();
+            return categoriaDto;
         }
     }
 }

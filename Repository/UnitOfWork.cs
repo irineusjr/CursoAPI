@@ -1,4 +1,5 @@
 ﻿using ApiCatalogo.Context;
+using System.Threading.Tasks;
 
 namespace ApiCatalogo.Repository
 {
@@ -26,9 +27,9 @@ namespace ApiCatalogo.Repository
                 return _categoriaRepo ??= new CategoriaRepository(_context);
             }
         }
-        public void Commit()
+        public async Task Commit()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
         }
         public void Dispose()

@@ -23,7 +23,7 @@
             <param name="id">Id da Categoria</param>
             <returns>Dados da categoria especificada</returns>
         </member>
-        <member name="M:ApiCatalogo.Controllers.CategoriasController.PostAsync(ApiCatalogo.Entities.Categoria)">
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.PostAsync(ApiCatalogo.DTOs.CategoriaDTO)">
              <summary>
              Inclui uma nova categoria
              </summary>
@@ -37,11 +37,11 @@
                         "imagemUrl": "http://teste.net/1.jpg"
                      }
              </remarks> 
-             <param name="categoria">Objeto Categoria</param>
+             <param name="categoriaDto">Objeto Categoria</param>
              <returns>O objeto Categoria incluída</returns>
              <remarks>Retorna a Categoria inserida</remarks>
         </member>
-        <member name="M:ApiCatalogo.Controllers.CategoriasController.PutAsync(System.Int32,ApiCatalogo.Entities.Categoria)">
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.PutAsync(System.Int32,ApiCatalogo.DTOs.CategoriaDTO)">
              <summary>
              Atualiza uma categoria, informando o id correspondente
              </summary>
@@ -56,7 +56,7 @@
                      }
              </remarks>
              <param name="id">Id da Categoria</param>
-             <param name="categoria">objeto categoria</param>
+             <param name="categoriaDto">objeto categoria</param>
              <returns></returns>
         </member>
         <member name="M:ApiCatalogo.Controllers.CategoriasController.DeleteAsync(System.Int32)">
@@ -79,7 +79,7 @@
             <param name="id">Id do produto</param>
             <returns>Objeto produto</returns>
         </member>
-        <member name="M:ApiCatalogo.Controllers.ProdutosController.Post(ApiCatalogo.Entities.Produto)">
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Post(ApiCatalogo.DTOs.ProdutoDTO)">
              <summary>
              Cadastra um novo produto
              </summary>
@@ -97,10 +97,10 @@
                             "categoriaId": 9
                      }
              </remarks>
-             <param name="produto">Objeto produto</param>
+             <param name="produtoDto">Objeto produto</param>
              <returns>Objeto produto cadastrado</returns>
         </member>
-        <member name="M:ApiCatalogo.Controllers.ProdutosController.Put(System.Int32,ApiCatalogo.Entities.Produto)">
+        <member name="M:ApiCatalogo.Controllers.ProdutosController.Put(System.Int32,ApiCatalogo.DTOs.ProdutoDTO)">
              <summary>
              Modifica um produto pelo id
              </summary>
@@ -119,7 +119,7 @@
                      }
              </remarks>
              <param name="id">id do produto a ser modificado</param>
-             <param name="produto">objeto produto</param>
+             <param name="produtoDto">objeto produto</param>
              <returns>Status do objeto modificado</returns>
         </member>
         <member name="M:ApiCatalogo.Controllers.ProdutosController.Delete(System.Int32)">

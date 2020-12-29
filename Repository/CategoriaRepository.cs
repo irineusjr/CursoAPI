@@ -2,6 +2,7 @@
 using ApiCatalogo.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ApiCatalogo.Repository
 {
@@ -10,9 +11,9 @@ namespace ApiCatalogo.Repository
         public CategoriaRepository(CatalogoDBContext contexto) : base(contexto)
         {
         }
-        public IEnumerable<Categoria> GetCategoriasProdutos()
+        public async Task<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            return Get().Include(c => c.Produtos);
+            return await Get().Include(x => x.Produtos).ToListAsync();
         }
     }
 }

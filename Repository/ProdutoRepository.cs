@@ -1,7 +1,9 @@
 ﻿using ApiCatalogo.Context;
 using ApiCatalogo.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ApiCatalogo.Repository
 {
@@ -11,9 +13,9 @@ namespace ApiCatalogo.Repository
         {
         }
 
-        public IEnumerable<Produto> GetProdutosPorPreco()
+        public async Task<IEnumerable<Produto>> GetProdutosPorPreco()
         {
-            return Get().OrderBy(p => p.Preco).ToList();
+            return await Get().OrderBy(p => p.Preco).ToListAsync();
         }
     }
 }

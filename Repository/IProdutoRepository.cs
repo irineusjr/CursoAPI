@@ -1,10 +1,11 @@
 ﻿using ApiCatalogo.Entities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ApiCatalogo.Repository
 {
     public interface IProdutoRepository : IRepository<Produto>
     {
-        IEnumerable<Produto> GetProdutosPorPreco();
+        Task<IEnumerable<Produto>> GetProdutosPorPreco();
     }
 }
