@@ -3,6 +3,7 @@ using ApiCatalogo.DTOs;
 using ApiCatalogo.Entities;
 using ApiCatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]  //retorna 401 se o usuario nao estiver autenticado
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Produces("application/json")]
     [Route("api/[Controller]")]

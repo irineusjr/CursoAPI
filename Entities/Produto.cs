@@ -18,6 +18,8 @@ namespace ApiCatalogo.Entities
         [MaxLength(300)]
         public string Descricao { get; set; }
         [Required]
+        [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal Preco { get; set; }
         [Required]
         [MaxLength(300)]

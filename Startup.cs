@@ -2,16 +2,20 @@ using ApiCatalogo.Context;
 using ApiCatalogo.Mappings;
 using ApiCatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace ApiCatalogo
 {
@@ -36,6 +40,27 @@ namespace ApiCatalogo
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<CatalogoDBContext>()
+                .AddDefaultTokenProviders();
+
+            //JWT
+            //adiciona o manipulador de autenticacao e define o esquema de autenticacao usado: bearer
+            //valida o emissor, a audiencia e a chave
+            //e usando a chave secreta privada valida a assinatura
+            services.AddAuthentication(
+                JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                options => options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidAudience = Configuration["TokenConfiguration:Audience"],
+                    ValidIssuer = Configuration["TokenConfiguration:Issuer"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                });
 
             //Registrar o gerador swagger
             services.AddSwaggerGen(c =>
@@ -93,6 +118,7 @@ namespace ApiCatalogo
             //adiciona o middleware de roteamento
             app.UseRouting();
 
+            //adiciona o middleware que habilita autenticacao
             app.UseAuthentication();
 
             //adiciona o middleware que habilita autorização
